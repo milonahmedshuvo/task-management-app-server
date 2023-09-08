@@ -31,6 +31,7 @@ async function run() {
     
    const userinfoCollection = client.db("ibosTaskManagement").collection("userinfo")
    const taskCreationCollection = client.db("ibosTaskManagement").collection("taskCreation")
+   const teamCreationCollection = client.db("ibosTaskManagement").collection("teamCreation")
 
 
 
@@ -52,6 +53,15 @@ async function run() {
        const alluser = await userinfoCollection.find(filter).toArray()
        res.send(alluser)
    })
+
+
+   app.post("/teamadd", async (req, res) => {
+      const teamData = req.body
+      const teamadd = await teamCreationCollection.insertOne(teamData)
+      res.send(teamData)
+   })
+
+   
 
 
 
