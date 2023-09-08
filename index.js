@@ -23,13 +23,14 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
-console.log(uri)
+
 
 async function run() {
 
   try {
     
    const userinfoCollection = client.db("ibosTaskManagement").collection("userinfo")
+   const taskCreationCollection = client.db("ibosTaskManagement").collection("taskCreation")
 
 
 
@@ -37,6 +38,19 @@ async function run() {
        const userinfo = req.body
        const result= await userinfoCollection.insertOne(userinfo)
        res.send(result)
+   })
+
+   app.post("/taskCreation", async (req, res) => {
+       const taskinfo = req.body 
+       console.log(taskinfo)
+       const result = await taskCreationCollection.insertOne(taskinfo)
+       res.send(result)
+   })
+
+   app.get("/user", async (req, res) => {
+       const filter = { }
+       const alluser = await userinfoCollection.find(filter).toArray()
+       res.send(alluser)
    })
 
 
