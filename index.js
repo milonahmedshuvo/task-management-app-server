@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express')
 const app = express()
 const port = 5000
@@ -31,7 +31,7 @@ async function run() {
     
    const userinfoCollection = client.db("ibosTaskManagement").collection("userinfo")
    const taskCreationCollection = client.db("ibosTaskManagement").collection("taskCreation")
-   const teamCreationCollection = client.db("ibosTaskManagement").collection("teamCreation")
+   
 
 
 
@@ -55,13 +55,48 @@ async function run() {
    })
 
 
-   app.post("/teamadd", async (req, res) => {
-      const teamData = req.body
-      const teamadd = await teamCreationCollection.insertOne(teamData)
-      res.send(teamData)
-   })
-
    
+
+  // team add and update 
+  app.patch("/teamadd/:id", async (req, res) => {
+      const body = req.body
+      console.log(body)
+      const id = req.params.id
+      const filter = {_id: new ObjectId(id)}
+      const update ={$set: {
+        admin:body.admin,
+        status:body.status
+      } }
+
+      const result = await userinfoCollection.updateOne(filter, update)
+      res.send(result)
+  })
+
+
+
+  // team member remove 
+  app.patch("/teamMemberRemove/:id", async(req, res) => {
+      const id = req.params.id 
+      const filter = {_id: new ObjectId(id)}
+      const body = req.body.status
+      const update = {$set: {
+        admin:" ",
+        status:body
+      }}
+      console.log(update)
+      const result = await userinfoCollection.updateOne(filter, update)
+      res.send(result)
+  })
+
+
+
+
+  app.get("/member/:email", async (req, res) => {
+      const email = req.params.email
+      const filter = {admin:email, status:true}
+      const member = await userinfoCollection.find(filter).project({username:1, _id:0}) .toArray()
+      res.send(member)
+  })
 
 
 
