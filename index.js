@@ -94,9 +94,29 @@ async function run() {
   app.get("/member/:email", async (req, res) => {
       const email = req.params.email
       const filter = {admin:email, status:true}
-      const member = await userinfoCollection.find(filter).project({username:1, _id:0}) .toArray()
+      const member = await userinfoCollection.find(filter).toArray()
       res.send(member)
   })
+
+
+
+  // get all team task 
+  app.get("/teamtaskview", async (req, res) => {
+      const filter = {}
+      const result = await taskCreationCollection.find(filter).toArray()
+      res.send(result)
+  })
+
+
+  app.delete("/taskDelete/:id", async (req, res) => {
+     const id = req.params.id
+     const filter = {_id: new ObjectId(id)}
+     const result = await taskCreationCollection.deleteOne(filter)
+     res.send(result)
+  })
+
+
+
 
 
 
